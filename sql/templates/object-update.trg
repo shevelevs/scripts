@@ -1,0 +1,4 @@
+
+%object_ddl%
+
+go

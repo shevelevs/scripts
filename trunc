@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ "$1" != "" ] ; then cat < /dev/null > $1; fi
+if [ "$2" != "" ] ; then cat < /dev/null > $2; fi
+if [ "$3" != "" ] ; then cat < /dev/null > $3; fi
+if [ "$4" != "" ] ; then cat < /dev/null > $4; fi
+if [ "$5" != "" ] ; then cat < /dev/null > $5; fi
+if [ "$6" != "" ] ; then cat < /dev/null > $6; fi
+if [ "$7" != "" ] ; then cat < /dev/null > $7; fi
+if [ "$8" != "" ] ; then cat < /dev/null > $8; fi
+if [ "$9" != "" ] ; then cat < /dev/null > $9; fi

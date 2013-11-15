@@ -1,0 +1,31 @@
+#!/bin/bash
+
+SERVER1=$1
+SERVER2=$2
+DB=$3
+PROC=$4
+
+if [ "$1" = "" ] || [ "$2" = "" ] || [ "$3" = "" ] || [ "$4" = "" ] ; then
+  echo "Usage: db_copy <server from> <server to> <db> <proc name>"
+  exit 10
+fi
+
+if [ "$HOME" = "" ] ; then
+  HOME=/home/shevelev
+fi
+
+. .db.config
+
+OUTDIR=$HOME/tmp/sql/$SERVER1
+rm -rf $OUTDIR || exit 1
+
+eval "USER=\$$SERVER1"
+$HOME/bin/dump_ddl -s $SERVER1 -u $USER -p ${USER}_pw -t $HOME/prj/sql/templates -o $OUTDIR -d $DB $PROC || exit 2
+find $OUTDIR -type f -exec $HOME/bin/nlfix {} \;
+
+eval "USER=\$$SERVER1"
+
+sqsh-ms -S $SERVER2 -U $USER -D $DB -i $OUTDIR/$PROC.* -P ${USER}_pw -L semicolon_hack=0 -c GO
+
+rm -rf $OUTDIR || exit 3
+

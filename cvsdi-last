@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cvs diff -r $(cvs log $1 | grep ^revision | head -n 2 | tail -n 1 | cut -c 10-) -r $(cvs log $1 | grep ^revision | head -n 1 | cut -c 10-) $*
+

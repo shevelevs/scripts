@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -e /opt/perl-5.8.8/bin/perl ]; then
+  /opt/perl-5.8.8/bin/perl -w $HOME/bin/dump_ddl.pl $*
+else 
+  #export HOME=`echo $HOME | sed -e 's/\/cygdrive\/\(.\)/\1:/'`
+  /usr/bin/perl $HOME/bin/dump_ddl.pl $*
+fi

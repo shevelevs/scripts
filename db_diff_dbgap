@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$1" = "" ]; then
+  echo "usage: db_diff_dbgap output_file"
+  exit 1
+fi
+
+db_diff dbgap_aa dbgap_aa_dev WGA_Main $1

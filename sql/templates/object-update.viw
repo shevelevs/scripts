@@ -1,0 +1,8 @@
+
+if not exists(select * from sysobjects where name = '%object_name%' and type in (N'V'))
+  exec('create VIEW dbo.%object_name% as select ''%object_name% not implemented'' as a')
+GO
+
+%object_ddl%
+
+go

@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+while read pattern ; do
+  printf "$pattern: " 
+  if ! grep -l $pattern -R --exclude=$pattern* "$@" * ; then
+    echo "not found";
+  fi
+  echo --
+done
+

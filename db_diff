@@ -1,0 +1,40 @@
+#!/bin/bash
+
+LIST_ONLY=0
+if [ "$1" = "-l" ]; then # list only
+  LIST_ONLY=1
+  shift
+fi
+
+SERVER1=$1
+SERVER2=$2
+DB=$3
+OUTPUT=$4
+
+if [ "$1" = "" ] || [ "$2" = "" ] || [ "$3" = "" ] || [ "$4" = "" ] ; then
+  echo "Usage: db_diff.sh <server1> <server2> <db> <output file>"
+  exit 10
+fi
+
+if [ "$HOME" = "" ] ; then
+  HOME=/home/shevelev
+fi
+
+. .db.config
+
+rm -rf $HOME/tmp/sql/$SERVER1 || exit 1
+
+eval "USER=\$$SERVER1"
+$HOME/bin/dump_ddl -s $SERVER1 -u $USER -p ${USER}_pw -t $HOME/prj/sql/templates -o $HOME/tmp/sql/$SERVER1 -d $DB || exit 2
+find $HOME/tmp/sql/$SERVER1 -type f -exec $HOME/bin/nlfix {} \;
+
+rm -rf $HOME/tmp/sql/$SERVER2 || exit 1
+eval "USER=\$$SERVER2"
+$HOME/bin/dump_ddl -s $SERVER2 -u $USER -p ${USER}_pw -t $HOME/prj/sql/templates -o $HOME/tmp/sql/$SERVER2 -d $DB || exit 2
+find $HOME/tmp/sql/$SERVER2 -type f -exec $HOME/bin/nlfix {} \;
+
+if [ "$LIST_ONLY" = "0" ]; then 
+  $HOME/bin/diff2html --only-changes -wBi $HOME/tmp/sql/$SERVER1 $HOME/tmp/sql/$SERVER2 > $OUTPUT || exit 6
+else
+  diff $HOME/tmp/sql/$SERVER1 $HOME/tmp/sql/$SERVER2 > $OUTPUT || exit 6
+fi

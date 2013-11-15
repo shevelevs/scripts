@@ -1,0 +1,28 @@
+#!/bin/bash
+
+SERVER=$1
+DB=$2
+OUTPUT=$4
+DIR=$3
+
+if [ "$1" = "" ] || [ "$2" = "" ] || [ "$3" = "" ] || [ "$4" = "" ] ; then
+  echo "Usage: dir_db_diff <server> <db> <dir> <ouput file>"
+  exit 10
+fi
+
+if [ "$HOME" = "" ] ; then
+  HOME=/home/shevelev
+fi
+
+SCRIPT_DIRECTORY=$(dirname $0)
+
+. $SCRIPT_DIRECTORY/.db.config
+
+rm -rf $HOME/tmp/sql || exit 1
+
+eval "USER=\$$SERVER"
+$HOME/bin/dump_ddl -s $SERVER -u $USER -p ${USER}_pw -t $HOME/prj/sql/templates -o $HOME/tmp/sql -d $DB || exit 2
+find $HOME/tmp/sql -type f -exec $HOME/bin/nlfix {} \;
+
+$HOME/bin/diff2html --only-changes -wBi -X$HOME/bin/db_diff.ignore $HOME/tmp/sql $DIR > $OUTPUT || exit 6
+

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+SERVER=$1
+DB=$2
+CVS=$3
+OUTPUT=$4
+
+if [ "$1" = "" ] || [ "$2" = "" ] || [ "$3" = "" ] || [ "$4" = "" ] ; then
+  echo "Usage: cvs_db_diff <server> <db> <cvs path> <output file>"
+  exit 10
+fi
+
+if [ "$HOME" = "" ] ; then
+  HOME=/home/shevelev
+fi
+
+cd $HOME/tmp || exit 3
+rm -rf $HOME/tmp/cvs1 || exit 4
+cvs -d :pserver:shevelev@cvsvault:/src/NCBI/vault.ncbi co -d cvs1 $CVS > /dev/null || exit 5
+rm -rf cvs1/CVS
+rm -f cvs1/*.tab
+/usr/bin/find $HOME/tmp/cvs1 -type f -exec $HOME/bin/nlfix {} \;
+cd - > /dev/null
+$HOME/bin/dir_db_diff $1 $2 $HOME/tmp/cvs1 $4 || exit 7

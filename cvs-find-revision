@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+rev=`cvs st $2 | grep Working | awk '{print $3}'`;
+maj=`echo $rev |  sed -r 's/\..+$//'`
+min=`echo $rev |  sed -r 's/^[^\.]\.//'` 
+for (( i=$min; i>=1; i-- ))
+do
+  if cvs -q up -r$maj.$i -p $2 | grep $1 ; then
+    echo $maj.$i;
+    break;
+  fi 
+done

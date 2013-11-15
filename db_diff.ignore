@@ -1,0 +1,3 @@
+# list of procedure/function names to ignore
+*gogi*
+*_ssh_*
